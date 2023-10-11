@@ -5,11 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Click on Image</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
-<img id="displayedImage" src="/static/ice_cream.png" alt="Your Image" style="border: none; display: block;"/>
-<p id="coordinates"></p>
+<img id="displayedImage" src="/static/ice_cream.png" alt="Your Image" style="display: block;"/>
+
+<p id="coordinates">Original Coordinates: </p>
+<p id="transformedCoordinates">Transformed Coordinates: </p>
 
 <script>
     let displayedImage = document.getElementById('displayedImage');
@@ -18,10 +21,25 @@
         let rect = displayedImage.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
-        document.getElementById('coordinates').innerText = `Clicked at: x = ${x}, y = ${y}`;
+        document.getElementById('coordinates').innerText = `Original Coordinates: x = ${x}, y = ${y}`;
+        
+        // Send the coordinates to the Flask backend
+        $.ajax({
+            url: "/store_coordinates",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ x: x, y: y }),
+            success: function(response) {
+                document.getElementById('transformedCoordinates').innerText = `Transformed Coordinates: x = ${response.x_transformed}, y = ${response.y_transformed}`;
+            },
+            error: function(error) {
+                console.error("Error sending coordinates:", error);
+            }
+        });
     });
 
 </script>
 
 </body>
 </html>
+
