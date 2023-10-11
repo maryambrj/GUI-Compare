@@ -5,20 +5,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Click on Image</title>
+    <style>
+        body {background-color: powderblue;}
+        h1   {color: blue;}
+        p    {color: red;}
+	img  {
+    		position:absolute;
+    		top: 200px;
+    		left: 0px;
+	     }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-
-<img id="displayedImage" src="/static/ice_cream.png" alt="Your Image" style="display: block;"/>
+<img id="displayedImage" src="static/targetimg.png" alt="Target Image" style="display: block;"/>
+<img id="maskImage" src="static/maskimg.png" alt="Target Image" style="display: block;"/>
+<h1>TEST</h1>
 
 <p id="coordinates">Original Coordinates: </p>
 <p id="transformedCoordinates">Transformed Coordinates: </p>
 
 <script>
-    let displayedImage = document.getElementById('displayedImage');
+    let mask = document.getElementById('maskImage');
 
-    displayedImage.addEventListener('click', function(e) {
-        let rect = displayedImage.getBoundingClientRect();
+    mask.addEventListener('click', function(e) {
+        let rect = mask.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
         document.getElementById('coordinates').innerText = `Original Coordinates: x = ${x}, y = ${y}`;
