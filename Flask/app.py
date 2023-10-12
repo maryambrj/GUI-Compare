@@ -1,37 +1,36 @@
-from flask import Flask, render_template, jsonify, request
-import imageio.v2 as imageio
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask_wtf import FlaskForm
+from wtforms import SubmitField
+from PIL import Image
+import os
+import base64
+from io import BytesIO
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'mysecretkey'
 
-@app.route('/')
+class SaveMaskForm(FlaskForm):
+    save = SubmitField('Save Mask')
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    form = SaveMaskForm()
+    if form.validate_on_submit():
+        # The functionality of saving the mask will be handled in the JS.
+        # This redirect is just to reload the form after the POST request.
+        return redirect(url_for('index'))
+    return render_template('index.html', form=form)
 
-@app.route('/store_coordinates', methods=['POST'])
-def store_coordinates():
-    x = request.json.get('x')
-    y = request.json.get('y')
-    
-    # Manipulating the coordinates (e.g., multiplying by 2)
-    x_transformed = x * 2
-    y_transformed = y * 2
-    
-    print(f"Received coordinates: x = {x}, y = {y}")
-    print(f"Transformed coordinates: x = {x_transformed}, y = {y_transformed}")
-    
-    return jsonify({"x_transformed": x_transformed, "y_transformed": y_transformed})
+@app.route('/save_mask', methods=['POST'])
+def save_mask():
+    data = request.json
+    mask_data = data['mask_data']
 
-if __name__ == '__main__':
-    imagefile="./static/dog.png"
-    imagefile="./static/ice_cream.png"
-    im = imageio.imread(imagefile);
-    imageio.imwrite('./static/targetimg.png',im);
-    im[:,:,:] = 0;
-    im[10:50,10:50,0] = 255;
-    im[10:50,10:50,3] = 255;
-    imageio.imwrite('./static/maskimg.png',im);
+    mask_img = Image.open(BytesIO(base64.b64decode(mask_data.split(',')[1])))
+    mask_img_name = "ice_cream_mask.png"
+    mask_img.save(os.path.join('static', mask_img_name))
 
-    print(im.shape)
+    return jsonify(status='success')
 
-
+if __name__ == "__main__":
     app.run(debug=True)
