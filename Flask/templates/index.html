@@ -31,32 +31,15 @@
         canvas.height = img.height;
     }
 
-    canvas.addEventListener('mousedown', function(event) {
-        isDrawing = true;
-        draw(event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
-    });
-
-    canvas.addEventListener('mousemove', function(event) {
-        if (isDrawing) {
-            draw(event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
-        }
-    });
-
-    canvas.addEventListener('mouseup', function() {
-        isDrawing = false;
-        ctx.beginPath();  // This line clears the current drawing path
-    });
-
-    function draw(x, y) {
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = 'red';
-
-        ctx.lineTo(x, y);
-        ctx.stroke();
+    canvas.addEventListener('click', function(event) {
+        let x = event.pageX - canvas.offsetLeft;
+        let y = event.pageY - canvas.offsetTop;
         ctx.beginPath();
-        ctx.moveTo(x, y);
-    }
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+    });
+
 
     function saveMask() {
         const canvasData = canvas.toDataURL();
