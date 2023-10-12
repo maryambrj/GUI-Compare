@@ -24,6 +24,8 @@
     let ctx = canvas.getContext('2d');
     let img = document.getElementById('sourceImage');
     
+    let isDrawing = false;
+    
     img.onload = function() {
         canvas.width = img.width;
         canvas.height = img.height;
@@ -37,6 +39,7 @@
         ctx.fillStyle = 'red';
         ctx.fill();
     });
+
 
     function saveMask() {
         const canvasData = canvas.toDataURL();
