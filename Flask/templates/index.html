@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<img id="sourceImage" src="/static/ice_cream.png" style="position: relative; z-index: 0;" alt="Source Image">
+<img id="sourceImage" src="/static/ice_cream.png" style="position: ;absolute; top: 0; left: 0; z-index: 0;" alt="Source Image">
 <canvas id="myCanvas" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
 
 <div id="control-panel">
@@ -20,26 +20,63 @@
 </div>
 
 <script>
-    let canvas = document.getElementById('myCanvas');
-    let ctx = canvas.getContext('2d');
-    let img = document.getElementById('sourceImage');
-    
+    let x = 0;
+    let y = 0;
     let isDrawing = false;
     
+    let img = document.getElementById('sourceImage');
+    let canvas = document.getElementById('myCanvas');
+    let ctx = canvas.getContext('2d');
+
     img.onload = function() {
         canvas.width = img.width;
         canvas.height = img.height;
-    }
+    };
 
-    canvas.addEventListener('click', function(event) {
-        let x = event.pageX - canvas.offsetLeft;
-        let y = event.pageY - canvas.offsetTop;
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = 'red';
-        ctx.fill();
+    //canvas.addEventListener('click', function(event) {
+    //    x = event.pageX - canvas.offsetLeft;
+    //    y = event.pageY - canvas.offsetTop;
+    //    ctx.beginPath();
+    //    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+    //    ctx.fillStyle = 'red';
+    //    ctx.fill();
+    //});
+
+    // Example code from https://stackoverflow.com/questions/59121165/why-this-holding-event-mouse-doesnt-for-a-canvas-painting
+    // Add the event listeners for mousedown, mousemove, and mouseup
+    canvas.addEventListener('mousedown', function(event) {
+  	x = event.pageX - canvas.offsetLeft;
+  	y = event.pageY - canvas.offsetTop; 
+  	isDrawing = true;
     });
 
+    canvas.addEventListener('mousemove', function(event) {
+  	if (isDrawing === true) {
+    		drawLine(ctx, x, y, event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
+    		x = event.pageX - canvas.offsetLeft;
+    		y = event.pageY - canvas.offsetTop;
+    	}
+    });
+
+    window.addEventListener('mouseup', function(event) {
+    	if (isDrawing === true) {
+    		drawLine(ctx, x, y, event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
+    		x = 0;
+    		y = 0;
+	    	isDrawing = false;
+  	}
+    });
+
+    function drawLine(ctx, x1, y1, x2, y2) {
+	ctx.beginPath();
+  	ctx.strokeStyle = 'black';
+  	ctx.lineWidth = 10;
+  	ctx.moveTo(x1, y1);
+  	ctx.lineTo(x2, y2);
+  	ctx.stroke();
+        ctx.fill();
+  	ctx.closePath();
+    };
 
     function saveMask() {
         const canvasData = canvas.toDataURL();
@@ -60,7 +97,7 @@
                 alert("Error saving mask!");
             }
         });
-    }
+    };
 </script>
 
 </body>
