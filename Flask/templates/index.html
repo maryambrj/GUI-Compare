@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Annotation</title>
     <style>
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+        }
         #control-panel {
             margin-top: 20px;
         }
@@ -12,8 +16,10 @@
 </head>
 <body>
 
-<img id="sourceImage" src="/static/ice_cream.png" style="position: ;absolute; top: 0; left: 0; z-index: 0;" alt="Source Image">
-<canvas id="myCanvas" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
+<div id="canvas-container">
+    <img id="sourceImage" src="/static/ice_cream.png" alt="Source Image">
+    <canvas id="myCanvas" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
+</div>
 
 <div id="control-panel">
     <button type="button" onclick="saveMask()">Save Mask</button>
@@ -33,49 +39,36 @@
         canvas.height = img.height;
     };
 
-    //canvas.addEventListener('click', function(event) {
-    //    x = event.pageX - canvas.offsetLeft;
-    //    y = event.pageY - canvas.offsetTop;
-    //    ctx.beginPath();
-    //    ctx.arc(x, y, 5, 0, 2 * Math.PI);
-    //    ctx.fillStyle = 'red';
-    //    ctx.fill();
-    //});
-
-    // Example code from https://stackoverflow.com/questions/59121165/why-this-holding-event-mouse-doesnt-for-a-canvas-painting
-    // Add the event listeners for mousedown, mousemove, and mouseup
     canvas.addEventListener('mousedown', function(event) {
-  	x = event.pageX - canvas.offsetLeft;
-  	y = event.pageY - canvas.offsetTop; 
-  	isDrawing = true;
+        x = event.pageX - canvas.offsetLeft;
+        y = event.pageY - canvas.offsetTop; 
+        isDrawing = true;
     });
 
     canvas.addEventListener('mousemove', function(event) {
-  	if (isDrawing === true) {
-    		drawLine(ctx, x, y, event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
-    		x = event.pageX - canvas.offsetLeft;
-    		y = event.pageY - canvas.offsetTop;
-    	}
+        if (isDrawing === true) {
+            drawLine(ctx, x, y, event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
+            x = event.pageX - canvas.offsetLeft;
+            y = event.pageY - canvas.offsetTop;
+        }
     });
 
     window.addEventListener('mouseup', function(event) {
-    	if (isDrawing === true) {
-    		drawLine(ctx, x, y, event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
-    		x = 0;
-    		y = 0;
-	    	isDrawing = false;
-  	}
+        if (isDrawing === true) {
+            x = 0;
+            y = 0;
+            isDrawing = false;
+        }
     });
 
     function drawLine(ctx, x1, y1, x2, y2) {
-	ctx.beginPath();
-  	ctx.strokeStyle = 'black';
-  	ctx.lineWidth = 10;
-  	ctx.moveTo(x1, y1);
-  	ctx.lineTo(x2, y2);
-  	ctx.stroke();
-        ctx.fill();
-  	ctx.closePath();
+        ctx.beginPath();
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 10;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.closePath();
     };
 
     function saveMask() {
