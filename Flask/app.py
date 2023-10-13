@@ -16,10 +16,8 @@ class SaveMaskForm(FlaskForm):
 def index():
     form = SaveMaskForm()
     if form.validate_on_submit():
-        # The functionality of saving the mask will be handled in the JS.
-        # This redirect is just to reload the form after the POST request.
         return redirect(url_for('index'))
-    return render_template('index.html', form=form)
+    return render_template('index_copy.html', form=form)
 
 @app.route('/save_mask', methods=['POST'])
 def save_mask():
